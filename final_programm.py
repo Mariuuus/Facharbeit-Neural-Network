@@ -11,19 +11,20 @@ with np.load('mnist.npz') as data:
     test_images = data['test_images']
     test_labels = data['test_labels']
 
-networkname = "testnet" #input("Please Enter the Network you want to use to see Working:")
+networkname = input("Please Enter the Network you want to use to see Working:")
 
 nn = Network([784, 30, 10, 10])
 
 
 #nn.saveNetwork("testnet")
 nn.loadNetwork(networkname)
-nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels, 10, 10, 3.0)
-nn.saveNetwork(networkname)
+#nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels, 5, 10, 3.0)
+#nn.saveNetwork(networkname)
 
 #print(nn.testdatapackage(test_images, test_labels))
+#nn.saveNetwork(networkname)
 
-"""root = tk.Tk()
+root = tk.Tk()
 
 def predict_new_picture():
     #net.SGD(training_data, 1, 10, 3.0, test_data=test_data)
@@ -45,4 +46,4 @@ label2.pack(side="bottom")
 bild1 = tk.PhotoImage(file='', master=root)
 label3 = tk.Label(root, image=bild1).pack(side="right")
 predict_new_picture()
-root.mainloop()"""
+root.mainloop()

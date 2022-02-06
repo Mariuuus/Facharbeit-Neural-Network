@@ -1,4 +1,4 @@
-from cProfile import label
+from itertools import count
 import random
 import numpy as np
 from pathlib import Path
@@ -60,42 +60,42 @@ class Network():
         return right_guesses
     
     def saveNetwork(self, network_name):
-        Path('./networks').mkdir(parents=True, exist_ok=True)
-        np.save(str('./networks/'+network_name+'_biases.npy'), self.biases)
-        np.save(str('./networks/'+network_name+'_weights.npy'), self.weights)
+        Path('./networks/'+network_name).mkdir(parents=True, exist_ok=True)
+        np.save(str('./networks/'+network_name+'/biases.npy'), self.biases)
+        np.save(str('./networks/'+network_name+'/weights.npy'), self.weights)
+        np.save(str('./networks/'+network_name+'/layersizes.npy'), self.layersize)
+        np.save(str('./networks/'+network_name+'/layernumber.npy'), self.layernumber)
 
     def loadNetwork(self, network_name):
-        self.biases = np.load(str('./networks/'+network_name+'_biases.npy'), allow_pickle=True)
-        self.weights = np.load(str('./networks/'+network_name+'_weights.npy'), allow_pickle=True)
+        self.biases = np.load(str('./networks/'+network_name+'/biases.npy'), allow_pickle=True)
+        self.weights = np.load(str('./networks/'+network_name+'/weights.npy'), allow_pickle=True)
+        self.layersize = np.load(str('./networks/'+network_name+'/layersizes.npy'), allow_pickle=True)
+        self.layernumber = np.load(str('./networks/'+network_name+'/layernumber.npy'), allow_pickle=True)
     
     def stochastic_gradient_descent(self, training_images, training_labels, test_images, test_labels, training_rounds, minibatch_size, learning_rate):
 
         n = len(training_images)
-        print(n)
-        
         n_test = len(test_images)
-        print(n_test)
 
         for j in range(training_rounds):
-            random.shuffle(training_images)
-            mini_batches_images =  [
-                training_images[k:k+minibatch_size]
-                for k in range(0, n, minibatch_size)]
-            mini_batches_labels = [
-                training_labels[k:k+minibatch_size]
-                for k in range(0, n, minibatch_size)]
-            mini_batches = zip(mini_batches_images, mini_batches_labels)
+            mini_batches = []
+            counter = 0
+            for i in range(n//minibatch_size):
+                mini_batch = []
+                for k in range(minibatch_size):
+                    mini_batch.append([(training_images[counter], training_labels[counter])])
+                    counter = counter+1
+                random.shuffle(mini_batch)
+                mini_batches.append(mini_batch)
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, learning_rate)
-                print("update weights and biases incoming")
             print("Epoch {} : {} / {}".format(j,self.testdatapackage(test_images, test_labels),n_test))
 
     def update_mini_batch(self, mini_batch, learning_rate):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         for batch in mini_batch:
-            print(batch, "next batch")
-            delta_nabla_b, delta_nabla_w = self.backprop(batch)
+            delta_nabla_b, delta_nabla_w = self.backprop(batch[0][0], batch[0][1])
             nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
         self.weights = [w-(learning_rate/len(mini_batch))*nw
@@ -104,12 +104,11 @@ class Network():
                        for b, nb in zip(self.biases, nabla_b)]
 
     def backprop(self, image, right):
-        print(batch)
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         # feedforward
-        activation = x
-        activations = [x] # list to store all the activations, layer by layer
+        activation = image
+        activations = [image] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
         for b, w in zip(self.biases, self.weights):
             z = np.dot(w, activation)+b
@@ -117,7 +116,7 @@ class Network():
             activation = sigmoid(z)
             activations.append(activation)
         # backward pass
-        delta = self.cost_derivative(activations[-1], y) * \
+        delta = self.cost_derivative(activations[-1], right) * \
             sigmoid_derivation(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
