@@ -1,7 +1,7 @@
-from itertools import count
 import random
 import numpy as np
 from pathlib import Path
+import os
 
 class Network():
     """Die Methode "__init__" fungiert ähnlich wie in java als "Konstruktor" der Klasse Network. 
@@ -58,7 +58,7 @@ class Network():
             if(prediction == label):
                 right_guesses = right_guesses+1
         return right_guesses
-    
+
     def saveNetwork(self, network_name):
         Path('./networks/'+network_name).mkdir(parents=True, exist_ok=True)
         np.save(str('./networks/'+network_name+'/biases.npy'), self.biases)
@@ -154,3 +154,7 @@ def sigmoid_derivation(x):
     gibt den Funktionswert zurück
     """
     return sigmoid(x)*(1-sigmoid(x))
+
+def doesNetworkExists(network_name):
+    path = './networks/'+network_name
+    return os.path.exists(path)
