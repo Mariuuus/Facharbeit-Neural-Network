@@ -1,2 +1,6 @@
 # Facharbeit Neural Network
- my facharbeit project
+## Setting up for Usage
+> installing independences out of pip (shell)
+```
+sudo apt-get install python-tk
+```
