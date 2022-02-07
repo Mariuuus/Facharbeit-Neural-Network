@@ -16,7 +16,7 @@ pip3 install -r requirements.txt
 ## Running the Neural Network
 >run the neural network and test stuff
 >just execute the file 'final_programm.py' via:
->(make sure that youre in the right directory)
+>(make sure that youre in the right directory via cd *path*)
 ```
 source env/bin/activate
 python3 final_programm.py
