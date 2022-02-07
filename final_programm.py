@@ -1,4 +1,3 @@
-from cgi import test
 from random import randint
 import numpy as np
 from final_neural_network import Network
@@ -13,58 +12,71 @@ with np.load('mnist.npz') as data:
     test_labels = data['test_labels']
 
 nn = Network([784, 30, 10, 10])
-test_run = False
 
-def trainNetwork():
-    print("Was möchtest du machen?")
-    print(' - erstelle ein neues Netwzwerk - tippe "create"')
-    print(' - traniere ein Netwerk - tippe "train"')
-    action = input('"train" or "create":')
-    if action == 'train':
-        networkname = input('Name des Netzwerkes, dass du trainieren möchtest:')
-        if network.doesNetworkExists(networkname):
-            nn.loadNetwork(networkname)
+def loadNetwork():
+    root = tk.Tk()
+    tk.Label(root, text='Log into a network', font=("Helvetica", 24), justify='center', pady=5).grid(row=0)
+    tk.Label(root, text='Networkname:', font=("Helvetica", 16)).grid(row=1)
+    netname = tk.Entry(root)
+    netname.grid(row=2, column=0)
 
-            def trainstart():
-                nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels,int(e1.get()),int(e2.get()),float(e3.get()))
-                nn.saveNetwork(networkname)
-            root = tk.Tk()
-            tk.Label(root, text=('Netzwerk:',networkname), font=("Helvetica", 20), justify='center', pady=10).grid(row=0, column=0)
-            tk.Label(root, text="Runden/Epochen").grid(row=1)
-            tk.Label(root, text="minibatch-Größe").grid(row=2)
-            tk.Label(root, text="lern-Rate").grid(row=3)
-            e1 = tk.Entry(root, textvariable=tk.IntVar())
-            e2 = tk.Entry(root, textvariable=tk.IntVar())
-            e3 = tk.Entry(root, textvariable=tk.DoubleVar())
-            e1.grid(row=1, column=1)
-            e2.grid(row=2, column=1)
-            e3.grid(row=3, column=1)
-
-
-            tk.Button(root, text="trainieren", font=("Helvetica", 16), command=trainstart).grid(row=4, column=0, pady=25)
-            tk.Button(root, text="schließen", font=("Helvetica", 16), command=root.destroy).grid(row=4, column=1, pady=25)
-
-            root.mainloop()
+    def logIn():
+        tempnetname = netname.get()
+        root.destroy()
+        if network.doesNetworkExists(tempnetname):
+            nn.loadNetwork(tempnetname)
         else:
-            print('Dieses Netwerk existiert nicht!')
-    elif action == 'create':
-        networkname = input('Name des Netzwerkes, dass du erstellen möchtest:')
-        if not network.doesNetworkExists(networkname):
-            nn.saveNetwork(networkname)
-            root = tk.Tk()
-        else:
-            print('Name bereits vergeben!')
-    else:
-        print('Keine Richtige Eingabe!')
+            nn.saveNetwork(tempnetname)
+        configureNetwork(tempnetname)
 
-#trainNetwork()
+    tk.Button(root, text="erstellen/konfigurieren", font=("Helvetica", 10), command=logIn).grid(row=3, column=0, pady=5)
+    tk.Button(root, text="schließen", font=("Helvetica", 10), command=root.destroy).grid(row=4, column=0, pady=0)
+    root.mainloop()
 
-def useNetwork():
-    networkname = input('Name des Netzwerkes, dass du visuell testen möchtest:')
+
+def configureNetwork(networkname):
+    def trainstart():
+        traingraph = nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels,int(e1.get()),int(e2.get()),float(e3.get()))
+        nn.saveNetwork(networkname)
+        plt.plot(traingraph)
+        plt.ylabel('accurency')
+        plt.show()
+    def testnet():
+        root.destroy()
+        useNetwork(networkname)
+    root = tk.Tk()
+    tk.Label(root, text=('Netzwerk:',networkname), font=("Helvetica", 20), justify='center', pady=10).grid(row=0)
+    tk.Label(root, text="Runden/Epochen").grid(row=1)
+    tk.Label(root, text="minibatch-Größe").grid(row=3)
+    tk.Label(root, text="lern-Rate").grid(row=5)
+    e1 = tk.Entry(root, textvariable=tk.IntVar())
+    e2 = tk.Entry(root, textvariable=tk.IntVar())
+    e3 = tk.Entry(root, textvariable=tk.DoubleVar())
+    e1.grid(row=2)
+    e2.grid(row=4)
+    e3.grid(row=6)
+
+    tk.Button(root, text="trainieren", font=("Helvetica", 12), command=trainstart).grid(row=7, pady=5)
+    tk.Button(root, text="testen", font=("Helvetica", 12), command=testnet).grid(row=8, pady=5)
+    tk.Button(root, text="schließen", font=("Helvetica", 12), command=root.destroy).grid(row=9, pady=5)
+
+    root.mainloop()
+
+def useNetwork(networkname):
     nn.loadNetwork(networkname)
     root = tk.Tk()
+
+    def quit():
+        root.after_cancel(after_id)
+        root.destroy()
+
+    def back_in_config():
+        root.after_cancel(after_id)
+        root.destroy()
+        configureNetwork(networkname)
     
     def predict_new_picture():
+        global after_id
         randompic = randint(0, 10000)
         plt.imshow(training_images[randompic].reshape(28,28), cmap='gray')
         path = './img/'+"current"+'.png'
@@ -74,15 +86,20 @@ def useNetwork():
         label1.config(text=text1)
         label2.config(text=text2)
         bild1.config(file=path)
-        root.after(1000, predict_new_picture)
+        after_id = root.after(1000, predict_new_picture)
     network = tk.Label(root, text=('Network: '+networkname), font=("Helvetica", 24))
     network.pack(side='top')
+    btn = tk.Button(root, text="schließen", font=("Helvetica", 16), command=back_in_config)
+    btn.pack(side="bottom")
     label1 = tk.Label(root, text='Prediction', font=("Helvetica", 16), justify='left')
     label1.pack(side="bottom")
     label2 = tk.Label(root, text='Right Answer:', font=("Helvetica", 16), justify='left')
     label2.pack(side="bottom")
+    
     bild1 = tk.PhotoImage(file='', master=root)
     tk.Label(root, image=bild1).pack(side="right")
     predict_new_picture()
+    root.protocol('WM_DELETE_WINDOW', quit)
     root.mainloop()
-useNetwork()
+
+loadNetwork()

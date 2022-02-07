@@ -76,6 +76,7 @@ class Network():
 
         n = len(training_images)
         n_test = len(test_images)
+        roundsstats = []
 
         for j in range(training_rounds):
             mini_batches = []
@@ -90,6 +91,9 @@ class Network():
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, learning_rate)
             print("Epoch {} : {} / {}".format(j,self.testdatapackage(test_images, test_labels),n_test))
+            roundsstats.append((self.testdatapackage(test_images, test_labels))/n_test)
+        return roundsstats
+
 
     def update_mini_batch(self, mini_batch, learning_rate):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
@@ -106,26 +110,18 @@ class Network():
     def backprop(self, image, right):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
-        # feedforward
         activation = image
-        activations = [image] # list to store all the activations, layer by layer
-        zs = [] # list to store all the z vectors, layer by layer
+        activations = [image]
+        zs = []
         for b, w in zip(self.biases, self.weights):
             z = np.dot(w, activation)+b
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
-        # backward pass
         delta = self.cost_derivative(activations[-1], right) * \
             sigmoid_derivation(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
-        # Note that the variable l in the loop below is used a little
-        # differently to the notation in Chapter 2 of the book.  Here,
-        # l = 1 means the last layer of neurons, l = 2 is the
-        # second-last layer, and so on.  It's a renumbering of the
-        # scheme in the book, used here to take advantage of the fact
-        # that Python can use negative indices in lists.
         for l in range(2, self.layernumber):
             z = zs[-l]
             sp = sigmoid_derivation(z)
