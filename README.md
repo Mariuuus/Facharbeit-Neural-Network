@@ -4,6 +4,7 @@
 ```
 sudo apt install python3.8
 sudo apt install python3-pip
+sudo apt install python3.8-venv
 sudo apt-get install python-tk
 ```
 >create the virtual enviroment and install the independences via pip and the requirement.txt
