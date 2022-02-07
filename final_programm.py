@@ -1,8 +1,8 @@
+from cgi import test
 from random import randint
 import numpy as np
 from final_neural_network import Network
 import final_neural_network as network
-import matplotlib.pyplot as plot
 import tkinter as tk
 from matplotlib import pyplot as plt
 
@@ -13,6 +13,7 @@ with np.load('mnist.npz') as data:
     test_labels = data['test_labels']
 
 nn = Network([784, 30, 10, 10])
+test_run = False
 
 def trainNetwork():
     print("Was möchtest du machen?")
@@ -23,20 +24,25 @@ def trainNetwork():
         networkname = input('Name des Netzwerkes, dass du trainieren möchtest:')
         if network.doesNetworkExists(networkname):
             nn.loadNetwork(networkname)
+
+            def trainstart():
+                nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels,int(e1.get()),int(e2.get()),float(e3.get()))
+                nn.saveNetwork(networkname)
             root = tk.Tk()
             tk.Label(root, text=('Netzwerk:',networkname), font=("Helvetica", 20), justify='center', pady=10).grid(row=0, column=0)
             tk.Label(root, text="Runden/Epochen").grid(row=1)
             tk.Label(root, text="minibatch-Größe").grid(row=2)
             tk.Label(root, text="lern-Rate").grid(row=3)
-            e1 = tk.Entry(root)
-            e2 = tk.Entry(root)
-            e3 = tk.Entry(root)
+            e1 = tk.Entry(root, textvariable=tk.IntVar())
+            e2 = tk.Entry(root, textvariable=tk.IntVar())
+            e3 = tk.Entry(root, textvariable=tk.DoubleVar())
             e1.grid(row=1, column=1)
             e2.grid(row=2, column=1)
             e3.grid(row=3, column=1)
 
-            tk.Button(root, text="trainieren", font=("Helvetica", 16)).grid(row=4, column=0, padx=10)
-            tk.Button(root, text="schließen", font=("Helvetica", 16), command=root.destroy).grid(row=4, column=1, padx=10)
+
+            tk.Button(root, text="trainieren", font=("Helvetica", 16), command=trainstart).grid(row=4, column=0, pady=25)
+            tk.Button(root, text="schließen", font=("Helvetica", 16), command=root.destroy).grid(row=4, column=1, pady=25)
 
             root.mainloop()
         else:
@@ -51,23 +57,14 @@ def trainNetwork():
     else:
         print('Keine Richtige Eingabe!')
 
-trainNetwork()
+#trainNetwork()
 
 def useNetwork():
     networkname = input('Name des Netzwerkes, dass du visuell testen möchtest:')
-
-    #nn.saveNetwork("testnet")
     nn.loadNetwork(networkname)
-    nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels, 5, 10, 3.0)
-    #nn.saveNetwork(networkname)
-
-    #print(nn.testdatapackage(test_images, test_labels))
-    #nn.saveNetwork(networkname)
-
     root = tk.Tk()
-
+    
     def predict_new_picture():
-        #net.SGD(training_data, 1, 10, 3.0, test_data=test_data)
         randompic = randint(0, 10000)
         plt.imshow(training_images[randompic].reshape(28,28), cmap='gray')
         path = './img/'+"current"+'.png'
@@ -78,12 +75,14 @@ def useNetwork():
         label2.config(text=text2)
         bild1.config(file=path)
         root.after(1000, predict_new_picture)
-
-    label1 = tk.Label(root, text='', font=("Helvetica", 32))
+    network = tk.Label(root, text=('Network: '+networkname), font=("Helvetica", 24))
+    network.pack(side='top')
+    label1 = tk.Label(root, text='Prediction', font=("Helvetica", 16), justify='left')
     label1.pack(side="bottom")
-    label2 = tk.Label(root, text='', font=("Helvetica", 32))
+    label2 = tk.Label(root, text='Right Answer:', font=("Helvetica", 16), justify='left')
     label2.pack(side="bottom")
     bild1 = tk.PhotoImage(file='', master=root)
-    label3 = tk.Label(root, image=bild1).pack(side="right")
+    tk.Label(root, image=bild1).pack(side="right")
     predict_new_picture()
     root.mainloop()
+useNetwork()
