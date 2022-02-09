@@ -2,7 +2,9 @@
 ## ON WINDOWS
 #### Setting up for Usage
 > installing independences out of pip (shell)
-installiere python3 [hier](https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe)
+
+install [python 3](https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe)
+
 >create the virtual enviroment in powershell and install the independences via pip and the requirement.txt
 ```
 python -m venv .venv
@@ -14,7 +16,7 @@ pip install -r requirements.txt
 >make sure that youre in the right directory via cd *path*
 ```
 .\.venv\Scripts\activate
-python final_programm.py
+python .\final_programm.py
 ```
 >programm is now started and should be self explaining
 
