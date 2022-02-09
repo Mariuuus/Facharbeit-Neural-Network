@@ -1,6 +1,6 @@
 # Facharbeit Neural Network
-## Setting up for Usage
-### ON WINDOWS
+## ON WINDOWS
+#### Setting up for Usage
 > installing independences out of pip (shell)
 ```
 sudo apt install python3.8
@@ -14,7 +14,7 @@ python3 -m venv env
 source env/bin/activate
 pip3 install -r requirements.txt
 ```
-## Running the Neural Network
+#### Running the Neural Network
 >just execute the file **final_programm.py** via:
 >make sure that youre in the right directory via cd *path*
 ```
@@ -25,7 +25,8 @@ python3 final_programm.py
 
 
 
-### ON LINUX
+## ON LINUX
+#### Setting up for Usage
 > installing independences out of pip (shell)
 ```
 sudo apt install python3.8
@@ -39,7 +40,7 @@ python3 -m venv env
 source env/bin/activate
 pip3 install -r requirements.txt
 ```
-## Running the Neural Network
+#### Running the Neural Network
 >just execute the file **final_programm.py** via:
 >make sure that youre in the right directory via cd *path*
 ```
