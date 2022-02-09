@@ -3,8 +3,7 @@
 #### Setting up for Usage
 > installing independences out of pip (shell)
 ```
-sudo apt install python3.8
-sudo apt install python3-pip
+installier python3: https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe
 sudo apt install python3.8-venv
 sudo apt-get install python-tk
 ```
@@ -24,12 +23,12 @@ python3 final_programm.py
 >programm is now started and should be self explaining
 
 
-
 ## ON LINUX
 #### Setting up for Usage
 > installing independences out of pip (shell)
 ```
-installier python3: https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe
+sudo apt install python3.8
+sudo apt install python3-pip
 sudo apt install python3.8-venv
 sudo apt-get install python-tk
 ```
