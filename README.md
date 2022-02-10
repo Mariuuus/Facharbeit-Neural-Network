@@ -5,7 +5,7 @@
 
 install [python 3](https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe)
 
->create the virtual enviroment in powershell and install the independences via pip and the requirement.txt
+>create the virtual enviroment in cmd and install the independences via pip and the requirement.txt (make sure youre in the rigth directory)
 ```
 python -m venv .venv
 .\.venv\Scripts\activate
