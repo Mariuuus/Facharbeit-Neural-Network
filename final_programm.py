@@ -5,14 +5,21 @@ import final_neural_network as network
 import tkinter as tk
 from matplotlib import pyplot as plt
 
+
+"""Diese Datei dient einfach der Darstellung, Visualiesirung und Nutzung eines Neuronalen Netzwerkes"""
+
+
+#laden der Dateb von MNIST
 with np.load('mnist.npz') as data:
     training_images = data['training_images']
     training_labels = data['training_labels']
     test_images = data['test_images']
     test_labels = data['test_labels']
 
+#erstellen des Netzwerkes
 nn = Network([784, 30, 10, 10])
 
+#einloggen in Netzwerke (mit tkinter als Grafikanzeige)
 def loadNetwork():
     root = tk.Tk()
     tk.Label(root, text='Log into a network', font=("Helvetica", 24), justify='center', pady=5).grid(row=0)
@@ -33,7 +40,7 @@ def loadNetwork():
     tk.Button(root, text="schließen", font=("Helvetica", 10), command=root.destroy).grid(row=4, column=0, pady=0)
     root.mainloop()
 
-
+#Netzwerk trainier und Konfigurierfenster, wird nach den erstellen oder einloggen in ein Netzwerk aufegrufen (mit tkinter als Grafikanzeige)
 def configureNetwork(networkname):
     def trainstart():
         traingraph = nn.stochastic_gradient_descent(training_images, training_labels, test_images, test_labels,int(e1.get()),int(e2.get()),float(e3.get()))
@@ -62,6 +69,7 @@ def configureNetwork(networkname):
 
     root.mainloop()
 
+#testen eines Netzwerkes, anhand zufälliger Testdaten. (mit tkinter als Grafikanzeige)
 def useNetwork(networkname):
     nn.loadNetwork(networkname)
     root = tk.Tk()
@@ -102,4 +110,5 @@ def useNetwork(networkname):
     root.protocol('WM_DELETE_WINDOW', quit)
     root.mainloop()
 
+#loadnetwork als anfang des Skriptes.
 loadNetwork()
