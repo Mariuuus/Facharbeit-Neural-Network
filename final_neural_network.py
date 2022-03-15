@@ -158,7 +158,7 @@ class Network():
             activations.append(activation)
 
         #b.	Mithilfe von Gleichung 1 im letzten Layer den „Fehler“ einbauen und einen Vektor der neuen Werte ermitteln.
-        #Gleichung 1:
+        #Gleichung 1: Die Ableitung der Kostenfunktion für den letzten Layer mit der Sigmoid ableitung multipliziert.
         delta = self.cost_derivative(activations[-1], right) * sigmoid_derivation(zs[-1])
         #Gleichung 3:
         nabla_b[-1] = delta
